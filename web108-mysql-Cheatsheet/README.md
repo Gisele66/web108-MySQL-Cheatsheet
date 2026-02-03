@@ -104,16 +104,60 @@
     - SELECT * FROM customers
       WHERE last_name IN ('LaRose', 'Hilborn', 'Taylor')
 
+# 19. How to Create & Remove Index:
+    - CREATE INDEX idx_customers_last_name
+      ON customers (last_name); (this creates the index and speeds up searches)
+    - SHOW INDEX FROM customers; (shows the indexes)
+    - DROP INDEX idx_customers_last_name ON customers; (this drops the index)
 
-How to Create & Remove Index
+# 20. Create Two Tables demonstrating a one to many relationship that shows a PK & FK:
+    - Example: Once customer has many orders:
+      - Table 1: customers (PK)
+        - CREATE TABLE customers (
+          customer_id INT AUTO_INCREMENT PRIMARY KEY,
+          first_name  VARCHAR(50) NOT NULL,
+          last_name   VARCHAR(50) NOT NULL
+        );
+      - Table 2: orders (FK → customers.customer_id)
+        - CREATE TABLE orders (
+          order_id     INT AUTO_INCREMENT PRIMARY KEY,
+          customer_id  INT NOT NULL,
+          order_date   DATE NOT NULL,
+          total        DECIMAL(10,2) NOT NULL,
 
+          CONSTRAINT fk_orders_customers
+            FOREIGN KEY (customer_id)
+            REFERENCES customers(customer_id)
+            ON DELETE CASCADE
+        );
 
-Create Two Tables demonstrating a one to many relationship that shows a PK & FK
+# 21. How to use Inner Join:
+      - SELECT
+          c.customer_id,
+          CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+          o.order_id,
+          o.order_date,
+          o.total
+        FROM customers c
+        INNER JOIN orders o
+          ON c.customer_id = o.customer_id
+        ORDER BY o.order_date;
 
-
-How to use Inner Join
-
-
-How to JOIN Multiple Tables
+# 22. How to JOIN Multiple Tables:
+    - SELECT
+        c.customer_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+        o.order_id,
+        o.order_date,
+        i.product,
+        i.qty,
+        i.price,
+        (i.qty * i.price) AS line_total
+      FROM customers c
+      INNER JOIN orders o
+        ON c.customer_id = o.customer_id
+      INNER JOIN order_items i
+        ON o.order_id = i.order_id
+      ORDER BY o.order_id, i.item_id;
 
 
